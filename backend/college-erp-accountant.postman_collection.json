@@ -1,0 +1,982 @@
+{
+  "info": {
+    "_postman_id": "9a123e45-b678-4cd9-bc01-23456789abcd",
+    "name": "College ERP Accountant Module",
+    "description": "Production-ready Postman collection for College ERP Accountant Module APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@college.edu\",\n  \"mobile\": \"9876543210\",\n  \"password\": \"SecurityPass123!\",\n  \"role\": \"accountant\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "if (pm.response.code === 200 && responseJson.data && responseJson.data.accessToken) {",
+                  "    pm.environment.set(\"token\", responseJson.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"accountant@college.edu\",\n  \"password\": \"AccountantPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"accountant@college.edu\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"YOUR_RESET_TOKEN\",\n  \"password\": \"NewSecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"AccountantPassword123!\",\n  \"newPassword\": \"NewAccountantPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users?page=1&limit=10&role=student",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "role", "value": "student" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prof. Adam\",\n  \"email\": \"adam@college.edu\",\n  \"mobile\": \"9876543233\",\n  \"password\": \"AdamPassword123!\",\n  \"role\": \"principal\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Get User Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/USER_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "USER_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prof. Adam Peterson\",\n  \"mobile\": \"9988776655\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/USER_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "USER_ID"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/USER_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "USER_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students?page=1&limit=10&course=B.Tech CS",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "course", "value": "B.Tech CS" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"admissionNumber\": \"CS26005\",\n  \"name\": \"Charlie Brown\",\n  \"department\": \"Computer Science\",\n  \"course\": \"B.Tech CS\",\n  \"semester\": 1,\n  \"academicYear\": \"2026-2027\",\n  \"gender\": \"male\",\n  \"email\": \"charlie@student.edu\",\n  \"phone\": \"9876543255\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students/STUDENT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "STUDENT_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parentName\": \"Arthur Brown\",\n  \"parentPhone\": \"9876543299\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/STUDENT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "STUDENT_ID"]
+            }
+          }
+        },
+        {
+          "name": "Upload Student Documents",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "document", "type": "file", "src": [] },
+                { "key": "name", "value": "High School Marksheet", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/STUDENT_ID/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "STUDENT_ID", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/students/STUDENT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "STUDENT_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fee Structures",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Fee Structures",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/fee-structures?course=B.Tech CS",
+              "host": ["{{baseUrl}}"],
+              "path": ["fee-structures"],
+              "query": [
+                { "key": "course", "value": "B.Tech CS" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"course\": \"B.Tech CS\",\n  \"semester\": 1,\n  \"feeType\": \"exam_fee\",\n  \"amount\": 5000,\n  \"dueDate\": \"2026-11-20\",\n  \"academicYear\": \"2026-2027\",\n  \"description\": \"Semester Examination Fees\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fee-structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["fee-structures"]
+            }
+          }
+        },
+        {
+          "name": "Get Fee Structure Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/fee-structures/STRUCTURE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["fee-structures", "STRUCTURE_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update Fee Structure",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fee-structures/STRUCTURE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["fee-structures", "STRUCTURE_ID"]
+            }
+          }
+        },
+        {
+          "name": "Delete Fee Structure",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/fee-structures/STRUCTURE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["fee-structures", "STRUCTURE_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Student Fees Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "Assign Fee to Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"STUDENT_ID\",\n  \"feeStructure\": \"STRUCTURE_ID\",\n  \"discount\": 0,\n  \"scholarship\": 0,\n  \"fine\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student-fees",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees"]
+            }
+          }
+        },
+        {
+          "name": "Record Fee Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paidAmount\": 15000,\n  \"paymentMethod\": \"online\",\n  \"transactionId\": \"TXN10022349\",\n  \"remarks\": \"Paid full lab fees online\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student-fees/RECORD_ID/pay",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees", "RECORD_ID", "pay"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Fee Record Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/student-fees/RECORD_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees", "RECORD_ID"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Fee List by Student ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/student-fees/student/STUDENT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees", "student", "STUDENT_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update Student Fee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fine\": 500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student-fees/RECORD_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees", "RECORD_ID"]
+            }
+          }
+        },
+        {
+          "name": "Delete Assigned Student Fee",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/student-fees/RECORD_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["student-fees", "RECORD_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Receipts Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List All Receipts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/receipts?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Receipt Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/receipts/RECEIPT_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts", "RECEIPT_ID"]
+            }
+          }
+        },
+        {
+          "name": "Download Receipt PDF",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/receipts/RECEIPT_ID/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["receipts", "RECEIPT_ID", "download"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Expenses Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Expenses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/expenses?category=electricity",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses"],
+              "query": [
+                { "key": "category", "value": "electricity" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Expense",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "category", "value": "electricity", "type": "text" },
+                { "key": "vendor", "value": "Power Grid", "type": "text" },
+                { "key": "invoiceNumber", "value": "INV-7711", "type": "text" },
+                { "key": "amount", "value": "4500", "type": "text" },
+                { "key": "attachment", "type": "file", "src": [] }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/expenses",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses"]
+            }
+          }
+        },
+        {
+          "name": "Get Expense Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/expenses/EXPENSE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "EXPENSE_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update Expense Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 4750\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/expenses/EXPENSE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "EXPENSE_ID"]
+            }
+          }
+        },
+        {
+          "name": "Delete Expense",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/expenses/EXPENSE_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["expenses", "EXPENSE_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Incomes Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Incomes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/incomes?source=donation",
+              "host": ["{{baseUrl}}"],
+              "path": ["incomes"],
+              "query": [
+                { "key": "source", "value": "donation" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Income",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"donation\",\n  \"amount\": 75000,\n  \"description\": \"Alumni development support\",\n  \"reference\": \"CHQ-98829\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/incomes",
+              "host": ["{{baseUrl}}"],
+              "path": ["incomes"]
+            }
+          }
+        },
+        {
+          "name": "Get Income Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/incomes/INCOME_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["incomes", "INCOME_ID"]
+            }
+          }
+        },
+        {
+          "name": "Update Income Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 80000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/incomes/INCOME_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["incomes", "INCOME_ID"]
+            }
+          }
+        },
+        {
+          "name": "Delete Income",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/incomes/INCOME_ID",
+              "host": ["{{baseUrl}}"],
+              "path": ["incomes", "INCOME_ID"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scholarships Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "Apply for Scholarship",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"STUDENT_ID\",\n  \"scholarshipName\": \"Merit Scholarship\",\n  \"amount\": 25000,\n  \"remarks\": \"Top 5% CGPA waiver\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/scholarships",
+              "host": ["{{baseUrl}}"],
+              "path": ["scholarships"]
+            }
+          }
+        },
+        {
+          "name": "Approve Scholarship",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"reason\": \"Approved based on semester transcripts\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/scholarships/SCHOLARSHIP_ID/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["scholarships", "SCHOLARSHIP_ID", "approve"]
+            }
+          }
+        },
+        {
+          "name": "List Scholarships",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/scholarships?status=approved",
+              "host": ["{{baseUrl}}"],
+              "path": ["scholarships"],
+              "query": [
+                { "key": "status", "value": "approved" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payroll (Salary) Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "Disburse Salary",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee\": \"USER_ID\",\n  \"employeeName\": \"Jane Doe\",\n  \"department\": \"Accounts\",\n  \"designation\": \"Junior Accountant\",\n  \"basicSalary\": 35000,\n  \"allowances\": { \"hra\": 7000, \"da\": 3000 },\n  \"deductions\": { \"pf\": 4200, \"esi\": 800, \"tax\": 1500 },\n  \"paymentDate\": \"2026-07-06\",\n  \"month\": 7,\n  \"year\": 2026,\n  \"status\": \"paid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/salaries",
+              "host": ["{{baseUrl}}"],
+              "path": ["salaries"]
+            }
+          }
+        },
+        {
+          "name": "Download Salary Slip PDF",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/salaries/SALARY_ID/slip",
+              "host": ["{{baseUrl}}"],
+              "path": ["salaries", "SALARY_ID", "slip"]
+            }
+          }
+        },
+        {
+          "name": "List Salaries",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/salaries?year=2026&month=7",
+              "host": ["{{baseUrl}}"],
+              "path": ["salaries"],
+              "query": [
+                { "key": "year", "value": "2026" },
+                { "key": "month", "value": "7" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports Manager",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "Collections Report (PDF)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reports/collection?format=pdf&fromDate=2026-06-01&toDate=2026-07-06",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "collection"],
+              "query": [
+                { "key": "format", "value": "pdf" },
+                { "key": "fromDate", "value": "2026-06-01" },
+                { "key": "toDate", "value": "2026-07-06" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Profit and Loss Report (Excel)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reports/profit-loss?format=excel&fromDate=2026-06-01&toDate=2026-07-06",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "profit-loss"],
+              "query": [
+                { "key": "format", "value": "excel" },
+                { "key": "fromDate", "value": "2026-06-01" },
+                { "key": "toDate", "value": "2026-07-06" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Outstanding Balances Report (CSV)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reports/outstanding?format=csv",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "outstanding"],
+              "query": [
+                { "key": "format", "value": "csv" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard & Charts",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Dashboard Charts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/charts",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "charts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+        }
+      },
+      "item": [
+        {
+          "name": "List Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/audit-logs?page=1&limit=25",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit-logs"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "25" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" },
+    { "key": "token", "value": "YOUR_JWT_ACCESS_TOKEN", "type": "string" },
+    { "key": "refreshToken", "value": "YOUR_JWT_REFRESH_TOKEN", "type": "string" }
+  ]
+}
