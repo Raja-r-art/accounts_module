@@ -46,7 +46,9 @@ class ScholarshipService {
   }
 
   async approveScholarship(id, status, reason, approvedById) {
-    const scholarship = await ScholarshipRepository.findById(id).populate('student');
+    // Use direct Mongoose query with populate (NOT the async repository method)
+    const Scholarship = require('../models/Scholarship');
+    const scholarship = await Scholarship.findById(id).populate('student');
     if (!scholarship) {
       throw new AppError(MESSAGES.NOT_FOUND('Scholarship record'), 404);
     }
@@ -62,23 +64,35 @@ class ScholarshipService {
 
     await scholarship.save();
 
-    // If approved, apply waiver to the student's pending fee record
+    // If approved, deduct scholarship amount from student's fee record
     if (status === SCHOLARSHIP_STATUS.APPROVED) {
-      const studentFee = await StudentFee.findOne({
-        student: scholarship.student._id,
+      const studentId = scholarship.student._id;
+
+      // Find any fee record for this academic year
+      let studentFee = await StudentFee.findOne({
+        student: studentId,
         academicYear: scholarship.academicYear,
-        status: { $in: ['pending', 'partial'] },
-      });
+      }).sort({ createdAt: -1 });
+
+      // Fallback: if no fee record found for exact academicYear, fall back to the student's most recent fee record
+      if (!studentFee) {
+        studentFee = await StudentFee.findOne({
+          student: studentId,
+        }).sort({ createdAt: -1 });
+      }
 
       if (studentFee) {
+        const oldPending = studentFee.pendingAmount;
         studentFee.scholarship += scholarship.amount;
-        await studentFee.save(); // Pre-save recalculates pendingAmount and status
+        await studentFee.save(); // pre-save recalculates pendingAmount and status
 
-        // Update student counters
+        const pendingDelta = studentFee.pendingAmount - oldPending; // will be negative (reduction)
+
+        // Update student counters: paid increases by reduction in pending, pending decreases
         await StudentRepository.updateFeeStats(
-          scholarship.student._id,
-          0,
-          -scholarship.amount
+          studentId,
+          -pendingDelta, // paidDelta (if pending went down, effectively "paid" goes up)
+          pendingDelta   // pendingDelta (negative = reduction)
         );
       }
 
@@ -86,7 +100,7 @@ class ScholarshipService {
       try {
         await NotificationService.sendScholarshipApprovedNotification(scholarship);
       } catch (_) {
-        // ignore
+        // ignore notification failures
       }
     }
 
